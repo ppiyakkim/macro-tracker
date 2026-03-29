@@ -1,0 +1,57 @@
+name: Backfill Historical Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: "시작 날짜 (YYYY-MM-DD)"
+        required: true
+        default: "2026-01-01"
+      end_date:
+        description: "끝 날짜 (YYYY-MM-DD, 비우면 오늘 자동)"
+        required: false
+        default: ""
+      force:
+        description: "이미 있는 데이터 덮어쓰기 (true/false)"
+        required: false
+        default: "false"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set end date (default to today)
+        run: |
+          END="${{ github.event.inputs.end_date }}"
+          if [ -z "$END" ]; then
+            END=$(date -u +%Y-%m-%d)
+          fi
+          echo "END_DATE=$END" >> $GITHUB_ENV
+
+      - name: Run backfill
+        env:
+          START_DATE: ${{ github.event.inputs.start_date }}
+          FORCE: ${{ github.event.inputs.force }}
+        run: python scripts/backfill.py
+
+      - name: Commit & push updated data
+        run: |
+          git config user.name  "macro-bot"
+          git config user.email "macro-bot@users.noreply.github.com"
+          git add data/prices.json
+          git diff --cached --quiet || git commit -m "data: backfill ${{ github.event.inputs.start_date }}"
+          git pull --rebase origin main
+          git push
