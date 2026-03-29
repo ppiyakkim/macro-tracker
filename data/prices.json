@@ -1,0 +1,8 @@
+{
+  "meta": {
+    "description": "Macro Index Tracker - Daily closing prices",
+    "indices": ["DJI","SPX","FTSE","STOXX","N225","HSI","KS11","BVSP","XU100","NSEI","SET","TWII","TA35","GC","CL"],
+    "last_updated": "2026-01-01"
+  },
+  "days": {}
+}
