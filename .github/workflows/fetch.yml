@@ -1,0 +1,54 @@
+name: Daily Price Fetch
+
+on:
+  schedule:
+    - cron: "0 9 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "날짜 (YYYY-MM-DD, 비우면 오늘)"
+        required: false
+        default: ""
+      force:
+        description: "이미 있는 데이터도 덮어쓰기 (true/false)"
+        required: false
+        default: "false"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set date (default to today)
+        run: |
+          DATE="${{ github.event.inputs.date }}"
+          if [ -z "$DATE" ]; then
+            DATE=$(date -u +%Y-%m-%d)
+          fi
+          echo "DATE=$DATE" >> $GITHUB_ENV
+
+      - name: Fetch prices
+        env:
+          FORCE: ${{ github.event.inputs.force }}
+        run: python scripts/fetch_prices.py
+
+      - name: Commit & push updated data
+        run: |
+          git config user.name  "macro-bot"
+          git config user.email "macro-bot@users.noreply.github.com"
+          git add data/prices.json
+          git diff --cached --quiet || git commit -m "data: prices $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
