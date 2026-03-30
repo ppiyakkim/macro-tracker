@@ -97,12 +97,38 @@ td:nth-child(2){text-align:left;}
 .spin{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg)}}
 .err-box{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:16px;color:#f87171;font-family:var(--mono);font-size:12px;margin:20px 0;}
-@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.spkc{display:none}}
+@media(max-width:900px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .spkc{display:none}
+  .ntabs{gap:1px}
+  .ntab{padding:5px 8px;font-size:11px}
+  .logo{font-size:11px;letter-spacing:2px}
+  .mstats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  nav{padding:0 12px;height:44px}
+  .main,.page{padding:12px}
+  .logo{display:none}
+  .ntab{padding:5px 8px;font-size:11px}
+  .hm-grid{grid-template-columns:100px repeat(12,1fr) !important}
+  .ytd-name{width:110px;font-size:10px}
+  .cval{font-size:16px}
+  .card{padding:10px 12px}
+  .twrap{font-size:11px}
+  td,th{padding:7px 8px !important;font-size:11px !important}
+  td:first-child{max-width:100px;overflow:hidden;text-overflow:ellipsis}
+}
+@media(max-width:400px){
+  .cards{grid-template-columns:1fr 1fr}
+  .ntabs{gap:0}
+  .ntab{padding:4px 6px;font-size:10px}
+}
 </style>
 </head>
-<body>
+<body class="light">
 <nav>
-  <div style="display:flex;align-items:center;">
+  <div style="display:flex;align-items:center;min-width:0;overflow:hidden;">
     <div class="logo">MACRO///</div>
     <div class="ntabs">
       <button class="ntab active" onclick="showPage('overview',this)">Overview</button>
@@ -111,10 +137,10 @@ td:nth-child(2){text-align:left;}
       <button class="ntab" onclick="showPage('ytd',this)">YTD</button>
     </div>
   </div>
-  <div class="live" style="gap:10px;">
+  <div class="live" style="gap:8px;flex-shrink:0;">
     <div class="live-dot"></div>
-    <div class="live-lbl" id="updLbl">loading...</div>
-    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark">&#9790;</button>
+    <div class="live-lbl" id="updLbl" style="display:none;"></div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark">&#9788;</button>
   </div>
 </nav>
 
@@ -523,11 +549,11 @@ function toggleTheme(){
   if(cmpInst)buildCmpChart(days());
 }
 (function(){
-  if(localStorage.getItem('theme')==='light'){
-    document.body.classList.add('light');
+  if(localStorage.getItem('theme')==='dark'){
+    document.body.classList.remove('light');
     document.addEventListener('DOMContentLoaded',()=>{
       const btn=document.getElementById('themeBtn');
-      if(btn)btn.innerHTML='&#9788;';
+      if(btn)btn.innerHTML='&#9790;';
     });
   }
 })();
