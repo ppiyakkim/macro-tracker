@@ -13,6 +13,13 @@
   --green:#10b981;--red:#ef4444;--amber:#f59e0b;--accent:#60a5fa;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
+body.light{
+  --bg:#f4f5f7;--bg2:#ffffff;--bg3:#eef0f3;--bg4:#e4e6ea;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --text:#1a1d23;--muted:#6b7280;--dim:#9ca3af;--accent:#2563eb;
+}
+.theme-btn{background:transparent;border:1px solid var(--border2);color:var(--muted);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.theme-btn:hover{color:var(--text);border-color:var(--text);}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;min-height:100vh;}
 nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:48px;position:sticky;top:0;z-index:200;}
@@ -104,7 +111,11 @@ td:nth-child(2){text-align:left;}
       <button class="ntab" onclick="showPage('ytd',this)">YTD</button>
     </div>
   </div>
-  <div class="live"><div class="live-dot"></div><div class="live-lbl" id="updLbl">loading...</div></div>
+  <div class="live" style="gap:10px;">
+    <div class="live-dot"></div>
+    <div class="live-lbl" id="updLbl">loading...</div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark">&#9790;</button>
+  </div>
 </nav>
 
 <div class="page active" id="pg-overview">
@@ -504,6 +515,22 @@ async function load(){
     document.getElementById('ovRoot').innerHTML=`<div class="err-box">Could not load data/prices.json<br><small>${e.message}</small></div>`;
   }
 }
+
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light');
+  document.getElementById('themeBtn').innerHTML=isLight?'&#9788;':'&#9790;';
+  localStorage.setItem('theme',isLight?'light':'dark');
+  if(cmpInst)buildCmpChart(days());
+}
+(function(){
+  if(localStorage.getItem('theme')==='light'){
+    document.body.classList.add('light');
+    document.addEventListener('DOMContentLoaded',()=>{
+      const btn=document.getElementById('themeBtn');
+      if(btn)btn.innerHTML='&#9788;';
+    });
+  }
+})();
 
 load();
 </script>
