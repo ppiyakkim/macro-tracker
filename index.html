@@ -381,7 +381,8 @@ function renderHM(){
         if(p===null){h+=`<div class="hm-cell" style="background:var(--bg3);color:var(--dim)">—</div>`;continue;}
         const intens=Math.min(Math.abs(p)/12,1);
         const bg=p>=0?`rgba(16,185,129,${0.12+intens*0.5})`:`rgba(239,68,68,${0.12+intens*0.5})`;
-        const tc=p>=0?'#6ee7b7':'#fca5a5';
+        const isLight=document.body.classList.contains('light');
+        const tc=p>=0?(isLight?'#065f46':'#6ee7b7'):(isLight?'#7f1d1d':'#fca5a5');
         h+=`<div class="hm-cell" style="background:${bg};color:${tc}" title="${idx.name} ${k}: ${p>=0?'+':''}${p.toFixed(1)}%">${p>=0?'+':''}${p.toFixed(1)}</div>`;
       }
     });
